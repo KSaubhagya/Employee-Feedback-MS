@@ -1,23 +1,25 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import "../styles/LoginPage.css";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-   //if empty
+    // if empty
     if (!username || !password) {
       setError("All fields are required.");
     } else {
-      // login check
+      // Mock login check
       if (username === "employee1" && password === "pass123") {
         setError("");
         alert("Login Successful!");
-        // Redirect to Feedback Form page or Dashboard (can use React Router for navigation)
+        navigate("/feedback"); // direct to FeedbackForm 
       } else {
         setError("Invalid Username or Password");
       }
