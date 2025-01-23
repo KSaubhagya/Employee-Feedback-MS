@@ -1,10 +1,10 @@
-/* LoginPage.css */
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f8f8f8; /* Light background */
+  background-color: #f8f8f8; 
 }
 
 .login-form {
@@ -19,7 +19,7 @@
 h2 {
   text-align: center;
   font-size: 2rem;
-  color: #14073d; /* Purple color */
+  color: #14073d; 
   margin-bottom: 17px;
   margin-top: 2px;
 }
@@ -46,12 +46,12 @@ h2 {
 }
 
 .input-group input:focus {
-  border-color: #0d032c; /* Purple border on focus */
+  border-color: #0d032c; /* border on focus */
   outline: none;
 }
 
 .error-message {
-  color: #800c0c; /* Red color for error messages */
+  color: #800c0c; 
   font-size: 0.9rem;
   text-align: center;
   margin-bottom: 20px;
@@ -72,7 +72,7 @@ h2 {
 }
 
 .login-btn:hover {
-  background-color: #402584; /* Slightly darker purple on hover */
+  background-color: #402584; 
   border-color: #401c9d;
 }
 
