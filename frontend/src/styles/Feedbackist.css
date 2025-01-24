@@ -1,0 +1,56 @@
+.feedback-list-container {
+    width: 90%;
+    margin: 50px auto;
+    text-align: center;
+  }
+  
+  .feedback-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .feedback-table th,
+  .feedback-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+  }
+  
+  .feedback-table th {
+    background-color: #7748ff;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .feedback-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .feedback-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  .pagination button {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
+  .pagination button.active {
+    background-color: #7748ff;
+    color: white;
+    border-color: #7748ff;
+  }
+  
+  .pagination button:hover:not(.active) {
+    background-color: #f1f1f1;
+  }
+  
