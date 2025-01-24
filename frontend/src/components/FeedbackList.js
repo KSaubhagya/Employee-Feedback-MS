@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/FeedbackList.css"; // Create a CSS file for styling
+import "../styles/FeedbackList.css"; // Ensure this CSS file is created for custom styles
 
 const FeedbackList = () => {
   // Mock data for feedback submissions

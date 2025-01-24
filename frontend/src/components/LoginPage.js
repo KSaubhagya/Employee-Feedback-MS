@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 import "../styles/LoginPage.css";
+import { loginUser } from "../services/api"; // Import the login API function
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -8,20 +9,26 @@ function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate(); // Initialize navigate
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // if empty
+    // Check for empty fields
     if (!username || !password) {
       setError("All fields are required.");
     } else {
-      // Mock login check
-      if (username === "employee1" && password === "pass123") {
-        setError("");
-        alert("Login Successful!");
-        navigate("/feedback"); // direct to FeedbackForm 
-      } else {
-        setError("Invalid Username or Password");
+      try {
+        // API call to validate login credentials
+        const response = await loginUser({ username, password });
+        if (response.data.success) { // Assuming the backend sends a `success` key in response
+          setError("");
+          alert("Login Successful!");
+          navigate("/feedback"); // Redirect to FeedbackForm
+        } else {
+          setError(response.data.message || "Invalid Username or Password");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        setError("Something went wrong. Please try again.");
       }
     }
   };

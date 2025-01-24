@@ -9,14 +9,15 @@ const FeedbackForm = () => {
   const [rating, setRating] = useState(0);
   const [error, setError] = useState('');
 
-  // Fetch team leads from backend (WSO2 Ballerina)
+  // Fetch team leads from the backend
   useEffect(() => {
     const fetchTeamLeads = async () => {
       try {
-        const response = await axios.get('/api/team-leads'); // Adjust API URL
+        const response = await axios.get('http://localhost:3000/teamLeads'); // Update with Ballerina API URL
         setTeamLeads(response.data);
       } catch (error) {
         console.error("Error fetching team leads:", error);
+        alert('Failed to load team leads. Please try again later.');
       }
     };
     fetchTeamLeads();
@@ -25,18 +26,20 @@ const FeedbackForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate all fields are filled
+    // Validate fields
     if (!selectedTeamLead || !feedback || rating === 0) {
       setError('Please fill out all fields before submitting.');
     } else {
       setError('');
-      // Send data to backend (WSO2 Ballerina API)
+      // Feedback payload
       const feedbackData = {
         teamLead: selectedTeamLead,
         feedback,
         rating,
       };
-      axios.post('/api/submit-feedback', feedbackData)
+
+      // Submit feedback to the backend
+      axios.post('http://localhost:3000/submitFeedback', feedbackData) // Update with Ballerina API URL
         .then(response => {
           alert('Feedback submitted successfully!');
           // Reset the form
@@ -46,16 +49,16 @@ const FeedbackForm = () => {
         })
         .catch(error => {
           console.error('Error submitting feedback:', error);
-          alert('An error occurred while submitting feedback.');
+          alert('An error occurred while submitting feedback. Please try again.');
         });
     }
   };
 
   return (
     <div className="feedback-form-container">
-      
       <h2>Submit Feedback</h2>
       <form onSubmit={handleSubmit} className="feedback-form">
+        {/* Team Lead Dropdown */}
         <div className="input-group">
           <label htmlFor="teamLead">Team Lead Name</label>
           <select
@@ -72,6 +75,7 @@ const FeedbackForm = () => {
           </select>
         </div>
 
+        {/* Feedback Textarea */}
         <div className="input-group">
           <label htmlFor="feedback">Feedback</label>
           <textarea
@@ -82,6 +86,7 @@ const FeedbackForm = () => {
           ></textarea>
         </div>
 
+        {/* Star Rating */}
         <div className="input-group">
           <label>Rating</label>
           <div className="rating">
@@ -97,8 +102,10 @@ const FeedbackForm = () => {
           </div>
         </div>
 
+        {/* Error Message */}
         {error && <div className="error-message">{error}</div>}
 
+        {/* Submit Button */}
         <button type="submit" className="submit-btn">Submit</button>
       </form>
     </div>
