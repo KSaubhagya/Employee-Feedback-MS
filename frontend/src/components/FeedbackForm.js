@@ -13,7 +13,7 @@ const FeedbackForm = () => {
   useEffect(() => {
     const fetchTeamLeads = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/teamLeads'); // Update with Ballerina API URL
+        const response = await axios.get('http://localhost:8080/teamLeads'); // Update with Ballerina API URL
         setTeamLeads(response.data);
       } catch (error) {
         console.error("Error fetching team leads:", error);
@@ -39,7 +39,7 @@ const FeedbackForm = () => {
       };
 
       // Submit feedback to the backend
-      axios.post('http://localhost:3000/submitFeedback', feedbackData) // Update with Ballerina API URL
+      axios.post('http://localhost:8080/submitFeedback', feedbackData) // Update with Ballerina API URL
         .then(response => {
           alert('Feedback submitted successfully!');
           // Reset the form

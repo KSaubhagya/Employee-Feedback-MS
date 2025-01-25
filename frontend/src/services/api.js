@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for API endpoints (adjust this to match your WSO2 Ballerina server URL)
-const API_URL = 'http://localhost:3000'; // Example: Change the port if necessary
+const API_URL = 'http://localhost:8080'; // Example: Change the port if necessary
 
 // Fetch list of team leads
 export const getTeamLeads = async () => {
@@ -37,12 +37,12 @@ export const getFeedbacks = async (page = 1) => {
 };
 
 // **New Function**: User login
-export const loginUser = async (username, password) => {
-  try {
-    const response = await axios.post(`${API_URL}/login`, { username, password });
-    return response.data; // Expecting backend to return login status and user data
-  } catch (error) {
-    console.error('Error logging in:', error);
-    throw error;
-  }
-};
+// export const loginUser = async (username, password) => {
+//   try {
+//     const response = await axios.post(`${API_URL}/login`, { username, password });
+//     return response.data; // Expecting backend to return login status and user data
+//   } catch (error) {
+//     console.error('Error logging in:', error);
+//     throw error;
+//   }
+// };
