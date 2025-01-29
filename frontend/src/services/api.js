@@ -36,13 +36,4 @@ export const getFeedbacks = async (page = 1) => {
   }
 };
 
-// **New Function**: User login
-// export const loginUser = async (username, password) => {
-//   try {
-//     const response = await axios.post(`${API_URL}/login`, { username, password });
-//     return response.data; // Expecting backend to return login status and user data
-//   } catch (error) {
-//     console.error('Error logging in:', error);
-//     throw error;
-//   }
-// };
+
