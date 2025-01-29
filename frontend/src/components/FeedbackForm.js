@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { getTeamLeads, submitFeedback } from '../services/api'; // Import func from api.js
 import '../styles/FeedbackForm.css';
 
 const FeedbackForm = () => {
@@ -13,8 +13,8 @@ const FeedbackForm = () => {
   useEffect(() => {
     const fetchTeamLeads = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/feedback/teamLeads'); // Update with Ballerina API URL
-        setTeamLeads(response.data);
+        const response = await getTeamLeads(); // Use the imported function
+        setTeamLeads(response);
       } catch (error) {
         console.error("Error fetching team leads:", error);
         alert('Failed to load team leads. Please try again later.');
@@ -23,7 +23,7 @@ const FeedbackForm = () => {
     fetchTeamLeads();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate fields
@@ -39,18 +39,17 @@ const FeedbackForm = () => {
       };
 
       // Submit feedback to the backend
-      axios.post('http://localhost:8080/feedback/submitFeedback', feedbackData) // Update with Ballerina API URL
-        .then(response => {
-          alert('Feedback submitted successfully!');
-          // Reset the form
-          setSelectedTeamLead('');
-          setFeedback('');
-          setRating(0);
-        })
-        .catch(error => {
-          console.error('Error submitting feedback:', error);
-          alert('An error occurred while submitting feedback. Please try again.');
-        });
+      try {
+        await submitFeedback(feedbackData); // Use the imported function
+        alert('Feedback submitted successfully!');
+        // Reset the form
+        setSelectedTeamLead('');
+        setFeedback('');
+        setRating(0);
+      } catch (error) {
+        console.error('Error submitting feedback:', error);
+        alert('An error occurred while submitting feedback. Please try again.');
+      }
     }
   };
 
@@ -66,7 +65,7 @@ const FeedbackForm = () => {
             value={selectedTeamLead}
             onChange={(e) => setSelectedTeamLead(e.target.value)}
           >
-            <option value="">Select Team Lead</option>
+            <option value="" disabled>Select Team Lead</option>
             {teamLeads.map((lead) => (
               <option key={lead.id} value={lead.name}>
                 {lead.name}
