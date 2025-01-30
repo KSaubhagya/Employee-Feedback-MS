@@ -1,5 +1,6 @@
 import ballerina/http;
 import ballerina/io;
+import ballerinax/mysql;
 
 // Define a record for team lead details
 public type TeamLead record {
@@ -21,8 +22,11 @@ TeamLead[] teamLeads = [
     { id: 3, name: "Charlie Brown" }
 ];
 
-// Feedback storage
+// Feedback storage (in-memory, can be replaced with a database)
 Feedback[] feedbackList = [];
+
+// MySQL configuration
+mysql:Client dbClient = check new mysql:Client("localhost", "root", "", "feedback_db", 3306); // Adjust password if necessary
 
 // Define the FeedbackService
 service /feedback on new http:Listener(8080) {
@@ -53,14 +57,20 @@ service /feedback on new http:Listener(8080) {
         if payload is json {
             var result = payload.fromJsonWithType(Feedback);
             if result is Feedback {
-                feedbackList.push(result);
-                io:println("Received Feedback:", result);
-                http:Response res = new;
-                res.setHeader("Access-Control-Allow-Origin", "*");
-                res.setHeader("Access-Control-Allow-Methods", "GET, POST");
-                res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-                res.setJsonPayload({ "message": "Feedback submitted successfully" });
-                checkpanic caller->respond(res);
+                // Insert feedback into the database
+                var insertResult = dbClient->execute(`INSERT INTO feedback (team_lead, feedback, rating) VALUES (${result.teamLead}, ${result.feedback}, ${result.rating})`);
+                if insertResult is error {
+                    checkpanic caller->respond({ "error": "Failed to submit feedback to the database" });
+                } else {
+                    feedbackList.push(result); // Optional: keep in-memory storage
+                    io:println("Received Feedback:", result);
+                    http:Response res = new;
+                    res.setHeader("Access-Control-Allow-Origin", "*");
+                    res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+                    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+                    res.setJsonPayload({ "message": "Feedback submitted successfully" });
+                    checkpanic caller->respond(res);
+                }
             } else {
                 checkpanic caller->respond({ "error": "Invalid feedback data" });
             }
