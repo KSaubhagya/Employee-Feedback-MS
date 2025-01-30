@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getTeamLeads, submitFeedback } from '../services/api'; // Import func from api.js
 import '../styles/FeedbackForm.css';
-import Navbar from './Navbar'; // Import the Navbar component
+
 
 const FeedbackForm = () => {
   const [teamLeads, setTeamLeads] = useState([]);

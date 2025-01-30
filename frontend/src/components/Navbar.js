@@ -8,6 +8,7 @@ const Navbar = () => {
                 <Link to="/" className="navbar-logo">
                     Employee Feedback System
                 </Link>
+                
                 <ul className="navbar-menu">
                     <li className="navbar-item">
                         <Link to="/" className="navbar-links">Home</Link>

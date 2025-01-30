@@ -19,7 +19,9 @@ public type Feedback record {
 TeamLead[] teamLeads = [
     { id: 1, name: "Alice Johnson" },
     { id: 2, name: "Bob Smith" },
-    { id: 3, name: "Charlie Brown" }
+    { id: 3, name: "Charlie Brown" },
+    { id: 4, name: "John Holland" },
+    { id: 5, name: "Peter Mintz" }
 ];
 
 // Feedback storage (in-memory, can be replaced with a database)

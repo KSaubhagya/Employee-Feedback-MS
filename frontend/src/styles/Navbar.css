@@ -11,8 +11,9 @@
 
 .navbar-logo {
     color: white;
-    font-size: 24px;
+    font-size: 1.3rem;
     text-decoration: none;
+    padding: 7px;
 }
 
 .navbar-menu {
