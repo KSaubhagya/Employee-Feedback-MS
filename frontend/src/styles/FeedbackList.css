@@ -17,7 +17,7 @@
   }
   
   .feedback-table th {
-    background-color: #7748ff;
+    background-color: #16083f;
     color: white;
     font-weight: bold;
   }
@@ -45,7 +45,7 @@
   }
   
   .pagination button.active {
-    background-color: #7748ff;
+    background-color: #16083f;
     color: white;
     border-color: #7748ff;
   }
