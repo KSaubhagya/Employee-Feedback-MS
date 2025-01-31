@@ -71,7 +71,7 @@ const FeedbackList = () => {
         </tbody>
       </table>
       {hasMore && !loading && (
-        <button onClick={fetchFeedbacks}>Load More</button>
+        <button className="pagination-btn" onClick={fetchFeedbacks}>Load More</button>
       )}
     </div>
   );

@@ -36,21 +36,27 @@
     margin-top: 10px;
   }
   
-  .pagination button {
-    padding: 10px 15px;
-    margin: 0 5px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    cursor: pointer;
-  }
-  
-  .pagination button.active {
+  .pagination-btn {
+    padding: 8px 10px;
     background-color: #16083f;
-    color: white;
-    border-color: #7748ff;
+    color: #fff;
+    border: 2px solid #7748ff;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    display: inline-block;
+    text-align: center;
   }
   
-  .pagination button:hover:not(.active) {
-    background-color: #f1f1f1;
+  .pagination-btn:hover {
+    background-color: #402584;
+    border-color: #401c9d;
+  }
+  
+  .pagination-btn:disabled {
+    background-color: #e1e1e1;
+    border-color: #ccc;
+    cursor: not-allowed;
   }
   
