@@ -1,33 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { getFeedbacks } from "../services/api"; // Import the API function
-import "../styles/FeedbackList.css"; // Ensure this CSS file is created for custom styles
+import { getFeedbacks } from "../services/api";
+import "../styles/FeedbackList.css";
 
 const FeedbackList = () => {
-  // State for feedback submissions
   const [feedbackData, setFeedbackData] = useState([]);
-  const [cursor, setCursor] = useState(null); // Use cursor instead of currentPage
+  const [cursor, setCursor] = useState(null);
   const [error, setError] = useState('');
-  const [hasMore, setHasMore] = useState(true); // To track if there are more pages
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false); // Prevent multiple calls
 
   // Fetch feedback data from the API
-  useEffect(() => {
-    const fetchFeedbacks = async () => {
-      try {
-        const data = await getFeedbacks(cursor); // Pass cursor
-        if (data.feedbacks && data.feedbacks.length > 0) {
-          setFeedbackData(prev => [...prev, ...data.feedbacks]); // Append new feedbacks
-          setCursor(data.nextCursor); // Update cursor for next call
-          setHasMore(data.hasMore); // Update based on API response
-        } else {
-          setHasMore(false); // No more feedbacks
-        }
-      } catch (err) {
-        setError('Failed to fetch feedbacks');
-      }
-    };
+  const fetchFeedbacks = async () => {
+    if (loading) return; // Prevent duplicate calls
+    setLoading(true);
 
+    try {
+      const data = await getFeedbacks(cursor);
+      if (data.feedbacks && data.feedbacks.length > 0) {
+        setFeedbackData(prev => [...prev, ...data.feedbacks]); // Append feedbacks
+        setCursor(data.nextCursor); // Update cursor
+        setHasMore(data.hasMore); // Update pagination status
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      setError('Failed to fetch feedbacks');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial fetch
+  useEffect(() => {
     fetchFeedbacks();
-  }, [cursor]); // Fetch when cursor changes
+  }, []); // Runs only once
 
   return (
     <div className="feedback-list-container">
@@ -57,10 +63,8 @@ const FeedbackList = () => {
           ))}
         </tbody>
       </table>
-      {hasMore && (
-        <button onClick={() => setCursor(feedbackData[feedbackData.length - 1].id)}>
-          Load More
-        </button>
+      {hasMore && !loading && (
+        <button onClick={fetchFeedbacks}>Load More</button>
       )}
     </div>
   );

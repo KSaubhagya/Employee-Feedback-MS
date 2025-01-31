@@ -111,6 +111,7 @@ resource function post submitFeedback(http:Caller caller, http:Request req) retu
     }
 }
 
+//pagination
 resource function get feedbacks(http:Caller caller, http:Request req) returns error? {
     string? cursor = req.getQueryParamValue("cursor");
     int pageSize = 10; // Set the limit for pagination
