@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getFeedbacks } from "../services/api";
 import "../styles/FeedbackList.css";
 
@@ -7,17 +7,23 @@ const FeedbackList = () => {
   const [cursor, setCursor] = useState(null);
   const [error, setError] = useState('');
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false); // Prevent multiple calls
+  const [loading, setLoading] = useState(false);
+  const isFetchingRef = useRef(false); // Ref to track fetching state
 
   // Fetch feedback data from the API
   const fetchFeedbacks = async () => {
-    if (loading) return; // Prevent duplicate calls
+    if (loading || isFetchingRef.current) return; // Prevent duplicate calls
     setLoading(true);
+    isFetchingRef.current = true; // Set fetching state
 
     try {
       const data = await getFeedbacks(cursor);
       if (data.feedbacks && data.feedbacks.length > 0) {
-        setFeedbackData(prev => [...prev, ...data.feedbacks]); // Append feedbacks
+        setFeedbackData(prev => {
+          const existingIds = new Set(prev.map(f => f.id)); // Create a set of existing IDs
+          const newFeedbacks = data.feedbacks.filter(f => !existingIds.has(f.id)); // Filter out duplicates
+          return [...prev, ...newFeedbacks]; // Append new feedbacks
+        });
         setCursor(data.nextCursor); // Update cursor
         setHasMore(data.hasMore); // Update pagination status
       } else {
@@ -27,6 +33,7 @@ const FeedbackList = () => {
       setError('Failed to fetch feedbacks');
     } finally {
       setLoading(false);
+      isFetchingRef.current = false; // Reset fetching state
     }
   };
 

@@ -111,18 +111,27 @@ resource function post submitFeedback(http:Caller caller, http:Request req) retu
     }
 }
 
-//pagination
+
 resource function get feedbacks(http:Caller caller, http:Request req) returns error? {
     string? cursor = req.getQueryParamValue("cursor");
     int pageSize = 10; // Set the limit for pagination
 
     sql:ParameterizedQuery query;
 
+    // First page or subsequent page based on cursor value
     if cursor is string {
         int cursorValue = check int:fromString(cursor); // Ensure proper conversion
-        query = `SELECT feedback_id, employee_name, team_lead, feedback, rating, submission_date FROM feedback WHERE feedback_id > ${cursorValue} ORDER BY feedback_id ASC LIMIT ${pageSize}`;
+        query = `SELECT feedback_id, employee_name, team_lead, feedback, rating, submission_date 
+                 FROM feedback 
+                 WHERE feedback_id > ${cursorValue} 
+                 ORDER BY feedback_id ASC 
+                 LIMIT ${pageSize}`;
     } else {
-        query = `SELECT feedback_id, employee_name, team_lead, feedback, rating, submission_date FROM feedback ORDER BY feedback_id ASC LIMIT ${pageSize}`;
+        // First page, no cursor provided
+        query = `SELECT feedback_id, employee_name, team_lead, feedback, rating, submission_date 
+                 FROM feedback 
+                 ORDER BY feedback_id ASC 
+                 LIMIT ${pageSize}`;
     }
 
     // Execute the query
@@ -132,9 +141,9 @@ resource function get feedbacks(http:Caller caller, http:Request req) returns er
     Feedback[] feedbacks = [];
     int nextCursor = 0;
 
-    // Iterate over the result stream
+    // Iterate over the result stream and collect feedbacks
     error? e = resultStream.forEach(function(record {int feedback_id; string employee_name; string team_lead; string feedback; int rating; string submission_date;} row) {
-        nextCursor = row.feedback_id;
+        nextCursor = row.feedback_id; // Set the next cursor to the last feedback's id
         feedbacks.push({
             id: row.feedback_id,
             ename: row.employee_name,
@@ -146,20 +155,22 @@ resource function get feedbacks(http:Caller caller, http:Request req) returns er
     });
 
     if e is error {
-        io:println("Error processing feedback data: ", e.message()); // Log the error
         check caller->respond({ "error": "Failed to process feedback data" });
         return;
     }
 
+    // Prepare the response with feedbacks and pagination details
     json response = {
         "feedbacks": feedbacks.toJson(),  // Convert array of records to JSON
-        "hasMore": feedbacks.length() == pageSize,
-        "nextCursor": feedbacks.length() > 0 ? nextCursor.toString() : null
+        "hasMore": feedbacks.length() == pageSize,  // Check if there are more feedbacks
+        "nextCursor": feedbacks.length() > 0 ? nextCursor.toString() : null // Provide the next cursor
     };
 
+    // Send the response with feedback data and pagination details
     http:Response res = new;
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setJsonPayload(response);
     check caller->respond(res);
 }
+
 }
