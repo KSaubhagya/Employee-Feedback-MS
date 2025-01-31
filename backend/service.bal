@@ -1,6 +1,7 @@
 import ballerina/http;
 import ballerina/io;
 import ballerinax/mysql;
+import ballerina/sql;
 
 // Define a record for team lead details
 public type TeamLead record {
@@ -10,9 +11,12 @@ public type TeamLead record {
 
 // Define a record for feedback
 public type Feedback record {
+    int id;
+    string ename;
     string teamLead;
     string feedback;
     int rating;
+    string submissionDate;
 };
 
 // Sample team leads data
@@ -80,4 +84,56 @@ service /feedback on new http:Listener(8080) {
             checkpanic caller->respond({ "error": "Invalid JSON payload" });
         }
     }
+     
+
+resource function get feedbacks(http:Caller caller, http:Request req) returns error? {
+    string? cursor = req.getQueryParamValue("cursor");
+    int pageSize = 10; // Set the limit for pagination
+
+    sql:ParameterizedQuery query;
+
+    if cursor is string {
+        int cursorValue = check int:fromString(cursor); // Ensure proper conversion
+        query = `SELECT feedback_id, employee_name, team_lead, feedback, rating, submission_date FROM feedback WHERE feedback_id > ${cursorValue} ORDER BY feedback_id ASC LIMIT ${pageSize}`;
+    } else {
+        query = `SELECT feedback_id, employee_name, team_lead, feedback, rating, submission_date FROM feedback ORDER BY feedback_id ASC LIMIT ${pageSize}`;
+    }
+
+    // Execute the query
+    stream<record {int feedback_id; string employee_name; string team_lead; string feedback; int rating; string submission_date;}, sql:Error?> resultStream =
+        dbClient->query(query);
+
+    Feedback[] feedbacks = [];
+    int nextCursor = 0;
+
+    // Iterate over the result stream
+    error? e = resultStream.forEach(function(record {int feedback_id; string employee_name; string team_lead; string feedback; int rating; string submission_date;} row) {
+        nextCursor = row.feedback_id;
+        feedbacks.push({
+            id: row.feedback_id,
+            ename: row.employee_name,
+            teamLead: row.team_lead,
+            feedback: row.feedback,
+            rating: row.rating,
+            submissionDate: row.submission_date
+        });
+    });
+
+    if e is error {
+        io:println("Error processing feedback data: ", e.message()); // Log the error
+        check caller->respond({ "error": "Failed to process feedback data" });
+        return;
+    }
+
+    json response = {
+        "feedbacks": feedbacks.toJson(),  // Convert array of records to JSON
+        "hasMore": feedbacks.length() == pageSize,
+        "nextCursor": feedbacks.length() > 0 ? nextCursor.toString() : null
+    };
+
+    http:Response res = new;
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setJsonPayload(response);
+    check caller->respond(res);
+}
 }

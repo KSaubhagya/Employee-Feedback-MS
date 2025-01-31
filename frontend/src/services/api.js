@@ -18,20 +18,25 @@ export const getTeamLeads = async () => {
 export const submitFeedback = async (feedbackData) => {
   try {
     const response = await axios.post(`${API_URL}/feedback/submitFeedback`, feedbackData);
-    return response.data; // Return dt
+    return response.data; // Return the data from the response
   } catch (error) {
     console.error('Error submitting feedback:', error);
-    throw error; 
+    throw error; // Rethrow the error for handling in the component
   }
 };
 
-// Fetch feedback list with pagination 
-export const getFeedbacks = async (page = 1) => {
+// Fetch feedback list with cursor-based pagination 
+export const getFeedbacks = async (cursor = null) => {
   try {
-    const response = await axios.get(`${API_URL}/feedbacks?page=${page}`);
+    const response = await axios.get('http://localhost:8080/feedback/feedbacks', {
+      params: {
+        cursor: cursor // Pass the cursor as a query parameter
+      }
+    });
     return response.data; // Return the data from the response
   } catch (error) {
     console.error('Error fetching feedbacks:', error);
-    throw error; 
+    throw error; // Rethrow the error for handling in the component
   }
 };
+

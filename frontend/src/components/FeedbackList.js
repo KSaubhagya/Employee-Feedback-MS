@@ -1,41 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getFeedbacks } from "../services/api"; // Import the API function
 import "../styles/FeedbackList.css"; // Ensure this CSS file is created for custom styles
 
 const FeedbackList = () => {
-  // Mock data for feedback submissions
-  const feedbackData = [
-    { id: 1, employeeName: "Alice", teamLead: "John", feedback: "Great mentor!", rating: 5, date: "2023-01-01" },
-    { id: 2, employeeName: "Bob", teamLead: "Jane", feedback: "Very supportive.", rating: 4, date: "2023-01-03" },
-    { id: 3, employeeName: "Charlie", teamLead: "John", feedback: "Helpful advice.", rating: 4, date: "2023-01-05" },
-    { id: 4, employeeName: "David", teamLead: "Jane", feedback: "Clear guidance.", rating: 5, date: "2023-01-10" },
-    { id: 5, employeeName: "Eva", teamLead: "John", feedback: "Great collaboration.", rating: 5, date: "2023-01-15" },
-    // Add more mock data here as needed
-  ];
+  // State for feedback submissions
+  const [feedbackData, setFeedbackData] = useState([]);
+  const [cursor, setCursor] = useState(null); // Use cursor instead of currentPage
+  const [error, setError] = useState('');
+  const [hasMore, setHasMore] = useState(true); // To track if there are more pages
 
-  // State for pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  // Fetch feedback data from the API
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const data = await getFeedbacks(cursor); // Pass cursor
+        if (data.feedbacks && data.feedbacks.length > 0) {
+          setFeedbackData(prev => [...prev, ...data.feedbacks]); // Append new feedbacks
+          setCursor(data.nextCursor); // Update cursor for next call
+          setHasMore(data.hasMore); // Update based on API response
+        } else {
+          setHasMore(false); // No more feedbacks
+        }
+      } catch (err) {
+        setError('Failed to fetch feedbacks');
+      }
+    };
 
-  // Calculate the displayed data
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentFeedback = feedbackData.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Handle page change
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  // Generate page numbers
-  const totalPages = Math.ceil(feedbackData.length / itemsPerPage);
-  const pageNumbers = [...Array(totalPages).keys()].map((num) => num + 1);
+    fetchFeedbacks();
+  }, [cursor]); // Fetch when cursor changes
 
   return (
     <div className="feedback-list-container">
       <h1>Employee Feedback List</h1>
+      {error && <p className="error">{error}</p>}
       <table className="feedback-table">
         <thead>
           <tr>
+            <th>Id</th>
             <th>Employee Name</th>
             <th>Team Lead</th>
             <th>Feedback</th>
@@ -44,28 +45,23 @@ const FeedbackList = () => {
           </tr>
         </thead>
         <tbody>
-          {currentFeedback.map((feedback) => (
+          {feedbackData.map((feedback) => (
             <tr key={feedback.id}>
-              <td>{feedback.employeeName}</td>
+              <td>{feedback.id}</td>
+              <td>{feedback.ename}</td>
               <td>{feedback.teamLead}</td>
               <td>{feedback.feedback}</td>
               <td>{feedback.rating}</td>
-              <td>{feedback.date}</td>
+              <td>{feedback.submissionDate}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="pagination">
-        {pageNumbers.map((number) => (
-          <button
-            key={number}
-            onClick={() => handlePageChange(number)}
-            className={currentPage === number ? "active" : ""}
-          >
-            {number}
-          </button>
-        ))}
-      </div>
+      {hasMore && (
+        <button onClick={() => setCursor(feedbackData[feedbackData.length - 1].id)}>
+          Load More
+        </button>
+      )}
     </div>
   );
 };
