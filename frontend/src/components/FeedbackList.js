@@ -61,7 +61,6 @@ const FeedbackList = () => {
       <div className="header-container">
         <h2 className="feedback-title">Employee Feedback List</h2>
         <form onSubmit={handleSearchSubmit} className="search-form">
-        
           <button type="submit" className="search-button">Next</button>
         </form>
       </div>
