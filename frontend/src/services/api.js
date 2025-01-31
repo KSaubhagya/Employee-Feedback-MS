@@ -28,7 +28,7 @@ export const submitFeedback = async (feedbackData) => {
 // Fetch feedback list with cursor-based pagination 
 export const getFeedbacks = async (cursor = null) => {
   try {
-    const response = await axios.get('http://localhost:8080/feedback/feedbacks', {
+    const response = await axios.get(`${API_URL}/feedback/feedbacks`, {
       params: {
         cursor: cursor // Pass the cursor as a query parameter
       }

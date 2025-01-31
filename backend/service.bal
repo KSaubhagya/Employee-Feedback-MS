@@ -19,6 +19,14 @@ public type Feedback record {
     string submissionDate;
 };
 
+// New record for submitting feedback
+public type FeedbackSubmission record {
+    string teamLead;
+    string feedback;
+    int rating;
+};
+
+
 // Sample team leads data
 TeamLead[] teamLeads = [
     { id: 1, name: "Alice Johnson" },
@@ -57,34 +65,51 @@ service /feedback on new http:Listener(8080) {
         checkpanic caller->respond(res);
     }
     
-    // Submit feedback
-    resource function post submitFeedback(http:Caller caller, http:Request req) returns error? {
-        var payload = req.getJsonPayload();
-        if payload is json {
-            var result = payload.fromJsonWithType(Feedback);
-            if result is Feedback {
-                // Insert feedback into the database
-                var insertResult = dbClient->execute(`INSERT INTO feedback (team_lead, feedback, rating) VALUES (${result.teamLead}, ${result.feedback}, ${result.rating})`);
-                if insertResult is error {
-                    checkpanic caller->respond({ "error": "Failed to submit feedback to the database" });
-                } else {
-                    feedbackList.push(result); // Optional: keep in-memory storage
-                    io:println("Received Feedback:", result);
-                    http:Response res = new;
-                    res.setHeader("Access-Control-Allow-Origin", "*");
-                    res.setHeader("Access-Control-Allow-Methods", "GET, POST");
-                    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-                    res.setJsonPayload({ "message": "Feedback submitted successfully" });
-                    checkpanic caller->respond(res);
-                }
-            } else {
-                checkpanic caller->respond({ "error": "Invalid feedback data" });
+    
+   
+
+// Submit feedback
+resource function post submitFeedback(http:Caller caller, http:Request req) returns error? {
+    var payload = req.getJsonPayload();
+    
+    // Check if the payload is valid JSON
+    if payload is json {
+        // Convert the JSON payload to a FeedbackSubmission record
+        var result = payload.fromJsonWithType(FeedbackSubmission);
+        
+        // Check if the conversion was successful
+        if result is FeedbackSubmission {
+            // Insert feedback into the database
+            var insertResult = dbClient->execute(`INSERT INTO feedback (team_lead, feedback, rating) VALUES (${result.teamLead}, ${result.feedback}, ${result.rating})`);
+            
+            // Check for database insertion errors
+            if insertResult is error {
+                io:println("Database insertion error: ", insertResult.message()); // Log the error
+                check caller->respond({ "error": "Failed to submit feedback to the database" });
+                return;
             }
+
+            // Log the received feedback
+            io:println("Received Feedback: ", result);
+
+            // Prepare and send the response
+            http:Response res = new;
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+            res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+            res.setJsonPayload({ "message": "Feedback submitted successfully" });
+            check caller->respond(res);
         } else {
-            checkpanic caller->respond({ "error": "Invalid JSON payload" });
+            // Log invalid feedback data
+            io:println("Invalid feedback data: ", payload.toString());
+            check caller->respond({ "error": "Invalid feedback data" });
         }
+    } else {
+        // Log invalid JSON payload
+        io:println("Invalid JSON payload: ", payload.toString());
+        check caller->respond({ "error": "Invalid JSON payload" });
     }
-     
+}
 
 resource function get feedbacks(http:Caller caller, http:Request req) returns error? {
     string? cursor = req.getQueryParamValue("cursor");
