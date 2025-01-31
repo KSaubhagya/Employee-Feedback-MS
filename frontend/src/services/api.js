@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Base URL endpoints 
+// Base URL for endpoints 
 const API_URL = 'http://localhost:8080'; 
 
 // Fetch team leads
@@ -25,18 +25,18 @@ export const submitFeedback = async (feedbackData) => {
   }
 };
 
-// Fetch feedback list with cursor-based pagination and optional search
-export const getFeedbacks = async (cursor = null, search = '') => {
+// Fetch feedback list 
+export const getFeedbacks = async (cursor = null) => {
   try {
     const response = await axios.get(`${API_URL}/feedback/feedbacks`, {
       params: {
-        cursor: cursor, // Pass the cursor as a query parameter
-        search: search // Pass the search term as a query parameter
+        cursor: cursor 
       }
     });
-    return response.data; // Return the data from the response
+    return response.data; 
   } catch (error) {
     console.error('Error fetching feedbacks:', error);
-    throw error; // Rethrow the error for handling in the component
+    throw error; 
   }
 };
+

@@ -8,25 +8,25 @@ const FeedbackList = () => {
   const [error, setError] = useState('');
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const [searchTerm, setSearchTerm] = useState(''); 
   const isFetchingRef = useRef(false); // Ref to track fetching state
 
   // Fetch feedback data from the API
   const fetchFeedbacks = async (search = '') => {
-    if (loading || isFetchingRef.current) return; // Prevent duplicate calls
+    if (loading || isFetchingRef.current) return; 
     setLoading(true);
-    isFetchingRef.current = true; // Set fetching state
+    isFetchingRef.current = true; 
 
     try {
-      const data = await getFeedbacks(cursor, search); // Pass search term
+      const data = await getFeedbacks(cursor, search); 
       if (data.feedbacks && data.feedbacks.length > 0) {
         setFeedbackData(prev => {
-          const existingIds = new Set(prev.map(f => f.id)); // Create a set of existing IDs
-          const newFeedbacks = data.feedbacks.filter(f => !existingIds.has(f.id)); // Filter out duplicates
-          return [...prev, ...newFeedbacks]; // Append new feedbacks
+          const existingIds = new Set(prev.map(f => f.id)); 
+          const newFeedbacks = data.feedbacks.filter(f => !existingIds.has(f.id)); 
+          return [...prev, ...newFeedbacks]; 
         });
-        setCursor(data.nextCursor); // Update cursor
-        setHasMore(data.hasMore); // Update pagination status
+        setCursor(data.nextCursor); 
+        setHasMore(data.hasMore); 
       } else {
         setHasMore(false);
       }
@@ -34,41 +34,34 @@ const FeedbackList = () => {
       setError('Failed to fetch feedbacks');
     } finally {
       setLoading(false);
-      isFetchingRef.current = false; // Reset fetching state
+      isFetchingRef.current = false; 
     }
   };
 
-  // Handle search input change
+  
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value); // Update search term
+    setSearchTerm(e.target.value); 
   };
 
-  // Handle search submission
+  
   const handleSearchSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission
-    setFeedbackData([]); // Clear existing feedback data
-    setCursor(null); // Reset cursor for new search
-    fetchFeedbacks(searchTerm); // Fetch feedbacks based on search term
+    e.preventDefault(); 
+    setFeedbackData([]); 
+    setCursor(null); 
+    fetchFeedbacks(searchTerm); 
   };
 
   // Initial fetch
   useEffect(() => {
     fetchFeedbacks();
-  }, []); // Runs only once
+  }, []); 
 
   return (
     <div className="feedback-list-container">
       <div className="header-container">
         <h2 className="feedback-title">Employee Feedback List</h2>
         <form onSubmit={handleSearchSubmit} className="search-form">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            placeholder="Search feedback..."
-            className="search-input"
-          />
-          <button type="submit" className="search-button">Search</button>
+        
           <button type="submit" className="search-button">Next</button>
         </form>
       </div>
