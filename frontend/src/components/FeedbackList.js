@@ -8,16 +8,17 @@ const FeedbackList = () => {
   const [error, setError] = useState('');
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
   const isFetchingRef = useRef(false); // Ref to track fetching state
 
   // Fetch feedback data from the API
-  const fetchFeedbacks = async () => {
+  const fetchFeedbacks = async (search = '') => {
     if (loading || isFetchingRef.current) return; // Prevent duplicate calls
     setLoading(true);
     isFetchingRef.current = true; // Set fetching state
 
     try {
-      const data = await getFeedbacks(cursor);
+      const data = await getFeedbacks(cursor, search); // Pass search term
       if (data.feedbacks && data.feedbacks.length > 0) {
         setFeedbackData(prev => {
           const existingIds = new Set(prev.map(f => f.id)); // Create a set of existing IDs
@@ -37,6 +38,19 @@ const FeedbackList = () => {
     }
   };
 
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Update search term
+  };
+
+  // Handle search submission
+  const handleSearchSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    setFeedbackData([]); // Clear existing feedback data
+    setCursor(null); // Reset cursor for new search
+    fetchFeedbacks(searchTerm); // Fetch feedbacks based on search term
+  };
+
   // Initial fetch
   useEffect(() => {
     fetchFeedbacks();
@@ -44,7 +58,20 @@ const FeedbackList = () => {
 
   return (
     <div className="feedback-list-container">
-      <h2>Employee Feedback List</h2>
+      <div className="header-container">
+        <h2 className="feedback-title">Employee Feedback List</h2>
+        <form onSubmit={handleSearchSubmit} className="search-form">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search feedback..."
+            className="search-input"
+          />
+          <button type="submit" className="search-button">Search</button>
+          <button type="submit" className="search-button">Next</button>
+        </form>
+      </div>
       {error && <p className="error">{error}</p>}
       <table className="feedback-table">
         <thead>
@@ -71,7 +98,7 @@ const FeedbackList = () => {
         </tbody>
       </table>
       {hasMore && !loading && (
-        <button className="pagination-btn" onClick={fetchFeedbacks}>Load More</button>
+        <button className="pagination-btn" onClick={() => fetchFeedbacks(searchTerm)}>Load More</button>
       )}
     </div>
   );
