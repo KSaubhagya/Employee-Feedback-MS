@@ -44,7 +44,7 @@ const FeedbackList = () => {
 
   return (
     <div className="feedback-list-container">
-      <h1>Employee Feedback List</h1>
+      <h2>Employee Feedback List</h2>
       {error && <p className="error">{error}</p>}
       <table className="feedback-table">
         <thead>

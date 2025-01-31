@@ -6,7 +6,7 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="navbar-container">
                 <Link to="/" className="navbar-logo">
-                    Employee Feedback System
+                    Employee Feedback
                 </Link>
                 
                 <ul className="navbar-menu">
