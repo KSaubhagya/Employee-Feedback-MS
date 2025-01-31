@@ -1,0 +1,116 @@
+openapi: 3.1.0
+info:
+  title: Employee Management Feedback System API
+  version: 1.0.0
+  description: API for managing employee feedback submissions and retrieval.
+servers:
+  - url: http://localhost:8080/feedback
+    description: Local development server
+paths:
+  /teamLeads:
+    get:
+      summary: Get a list of team leads
+      responses:
+        '200':
+          description: A list of team leads
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+  /submitFeedback:
+    post:
+      summary: Submit feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                teamLead:
+                  type: string
+                feedback:
+                  type: string
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+      responses:
+        '200':
+          description: Feedback submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /feedbacks:
+    get:
+      summary: Get a list of feedbacks with pagination
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          description: Cursor for pagination
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of feedbacks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedbacks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        ename:
+                          type: string
+                        teamLead:
+                          type: string
+                        feedback:
+                          type: string
+                        rating:
+                          type: integer
+                        submissionDate:
+                          type: string
+                          format: date-time
+                  hasMore:
+                    type: boolean
+                  nextCursor:
+                    type: string
+components:
+  schemas:
+    FeedbackSubmission:
+      type: object
+      properties:
+        teamLead:
+          type: string
+        feedback:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
