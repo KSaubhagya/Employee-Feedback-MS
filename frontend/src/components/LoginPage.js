@@ -11,11 +11,11 @@ function LoginPage() {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // if empty
+    
     if (!username || !password) {
       setError("All fields are required.");
     } else {
-      // Mock login check
+     
       if (username === "employee1" && password === "pass123") {
         setError("");
         alert("Login Successful!");

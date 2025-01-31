@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getTeamLeads, submitFeedback } from '../services/api'; // Import func from api.js
+import { getTeamLeads, submitFeedback } from '../services/api'; 
 import '../styles/FeedbackForm.css';
 
 
@@ -10,11 +10,11 @@ const FeedbackForm = () => {
   const [rating, setRating] = useState(0);
   const [error, setError] = useState('');
 
-  // Fetch team leads from the backend
+  // Fetch team leads 
   useEffect(() => {
     const fetchTeamLeads = async () => {
       try {
-        const response = await getTeamLeads(); // Use the imported function
+        const response = await getTeamLeads(); 
         setTeamLeads(response);
       } catch (error) {
         console.error("Error fetching team leads:", error);
@@ -39,11 +39,11 @@ const FeedbackForm = () => {
         rating,
       };
 
-      // Submit feedback to the backend
+      // Submit feedback 
       try {
-        await submitFeedback(feedbackData); // Use the imported function
+        await submitFeedback(feedbackData); 
         alert('Feedback submitted successfully!');
-        // Reset the form
+        // Reset
         setSelectedTeamLead('');
         setFeedback('');
         setRating(0);
@@ -58,7 +58,7 @@ const FeedbackForm = () => {
     <div className="feedback-form-container">
       <h2>Submit Feedback</h2>
       <form onSubmit={handleSubmit} className="feedback-form">
-        {/* Team Lead Dropdown */}
+       
         <div className="input-group">
           <label htmlFor="teamLead">Team Lead Name</label>
           <select
@@ -75,7 +75,7 @@ const FeedbackForm = () => {
           </select>
         </div>
 
-        {/* Feedback Textarea */}
+        
         <div className="input-group">
           <label htmlFor="feedback">Feedback</label>
           <textarea
@@ -86,7 +86,7 @@ const FeedbackForm = () => {
           ></textarea>
         </div>
 
-        {/* Star Rating */}
+       
         <div className="input-group">
           <label>Rating</label>
           <div className="rating">
@@ -102,10 +102,10 @@ const FeedbackForm = () => {
           </div>
         </div>
 
-        {/* Error Message */}
+      
         {error && <div className="error-message">{error}</div>}
 
-        {/* Submit Button */}
+       
         <button type="submit" className="submit-btn">Submit</button>
       </form>
     </div>
