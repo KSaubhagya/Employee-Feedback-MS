@@ -5,7 +5,7 @@
 <h3>## ✨ Features </h3>
 ### Frontend (React) 💻  
 
-- **User Authentication**: Mock login system with predefined credentials 
+- **User Authentication**: Mock login system with predefined credentials
 - **Feedback Form**:  
   - Dropdown populated dynamically from the backend in a form for employees to provide detailed feedback with a 5-star rating system.  
   - **Validation**: Ensures all fields are filled before submission.  
