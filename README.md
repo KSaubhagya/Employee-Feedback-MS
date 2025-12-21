@@ -17,7 +17,7 @@
 
 - **APIs**:  
   - `GET /teamLeads`: Returns a list of available team leads.  
-  - `POST /submitFeedback`: Accepts feedback from employees and stores it in a database.  
+  - `POST /submitFeedback`: Accepts feedback from employees and stores it in a database.
   - `GET /feedbacks`: Retrieves all feedback with support for pagination.  
 - **Database Setup**:  
   - Stores the data in MySQL database.
