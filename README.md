@@ -1,4 +1,4 @@
-<h1># 📝 Employee Feedback Management System  </h1>
+<h1># 📝 Employee Feedback Management System </h1>
 <h3 align="left">## 📌 Description </h3>
 <h4 align="left">The Employee Feedback Management System is a web application designed to streamline the process of collecting and managing employee feedback about their team leads. Built with Ballerina for the backend and React for the frontend, the system provides an intuitive and efficient user experience for submitting, viewing, and managing feedback on managers.</h4>
 <br>
